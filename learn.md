@@ -198,6 +198,7 @@
   >mylist is ['banana']
 
 很明显，普通引用只是名称的绑定，3而只有完整切片才是真正意义上的复制。所以我们在简单引用后一定要考虑是否可以更改，因为操作可能影响到源对象。
+
 ## Day3 ##
 
 - **面向对象编程**
@@ -212,24 +213,90 @@
     class Person:
         def say_hi(self):
             print('Hello,how are you?')
-    ```
+     ```
     Python中 特殊意义的类函数名称
      1. __init__ 方法
+
           该方法会在类的对象被实例化（Instantiated）时立即运行。这一方法可以用作初始化操作。
+
           ``` python
            class Person:
                def __init__(self,name)
                    self.name = name
-               def say_hi(self)：
-                 print（'Hello,my name is',self.name)
-            p = Person('Swaroop')
+               def say_hi(self):
+                 print（"Hello/,my name is",self.name)
+            p = Person("Swaroop")
             p.say_hi()
+          ```
+
+     ```
+     2. 特殊变量命名方法
+      1. _xx 以单下划线开头的表示的是protected类型的变量。即保护类型只能允许其本身与子类进行访问。若内部变量标示，如： 当使用“from M import”时，不会将以一个下划线开头的对象引入 。
+
+      2. __xx 双下划线的表示的是私有类型的变量。只能允许这个类本身进行访问了，连子类也不可以用于命名一个类属性（类变量），调用时名字被改变（在类FooBar内部，__boo变成_FooBar__boo,如self._FooBar__boo）
+
+      3. __xx__定义的是特列方法。用户控制的命名空间内的变量或是属性，如init , __import__或是file 。只有当文档有说明时使用，不要自己定义这类变量。 （就是说这些是python内部定义的变量名）
+
+      在这里强调说一下私有变量,python默认的成员函数和成员变量都是公开的,没有像其他类似语言的public,private等关键字修饰.但是可以在变量前面加上两个下划线"_",这样的话函数或变量就变成私有的.这是python的私有变量轧压(这个翻译好拗口),英文是(private name mangling.)
+      **情况就是当变量被标记为私有后,在变量的前端插入类名,再类名前添加一个下划线"_",即形成了_ClassName__变量名.**
       ```
-    2. 特殊变量命名方法
-      1、 _xx 以单下划线开头的表示的是protected类型的变量。即保护类型只能允许其本身与子类进行访问。若内部变量标示，如： 当使用“from M import”时，不会将以一个下划线开头的对象引入 。
+## Day4 ##
+- **python文件操作**
 
-      2、 __xx 双下划线的表示的是私有类型的变量。只能允许这个类本身进行访问了，连子类也不可以用于命名一个类属性（类变量），调用时名字被改变（在类FooBar内部，__boo变成_FooBar__boo,如self._FooBar__boo）
+  文件操作涉及os模块和shutil模块
+        os.getcwd() #获取当前目录的绝对路径
+        os.chdir(path)#改变当前的工作目录
+        os.listdir(path) #获取路径下的所有文件和目录名
+        os.remove(name) # 删除文件
+        os.removedirs(r'path') #删除包含该目录以及之下所有文件
+        os.path.isfile(name)  #判断是否为文件True False
+        os.path.isdir(name)  #判断是否为目录 True False
+        os.path.isabs() #判断是否为绝对路径
+        os.path.exists() #判断路径是否存在
+        os.path.split() # 分离出目录名和文件名
+        os.path.splitext()#分离扩展名
+        os.system() #运行shell命令
+        os.popen() #带返回的shell命令执行
+        os.mknod("test.txt")#创建文件
+        复制
+        shutil.copyfile(oldfile,newfile)
+        shutil.copy(file,file/path)
+        移动
+        shutil.move(a,b)
+  >fp = open("test.txt",w) #直接打开一个文件,如果文件不存
 
-      3、 __xx__定义的是特列方法。用户控制的命名空间内的变量或是属性，如init , __import__或是file 。只有当文档有说明时使用，不要自己定义这类变量。 （就是说这些是python内部定义的变量名）
+关于open的模式:
 
-      在这里强调说一下私有变量,python默认的成员函数和成员变量都是公开的,没有像其他类似语言的public,private等关键字修饰.但是可以在变量前面加上两个下划线"_",这样的话函数或变量就变成私有的.这是python的私有变量轧压(这个翻译好拗口),英文是(private name mangling.) **情况就是当变量被标记为私有后,在变量的前端插入类名,再类名前添加一个下划线"_",即形成了_ClassName__变量名.**
+|模式|含义|
+|:-:|:-:|
+|w| 以写的方式打开,若已存在则覆盖,若不存在则新建|
+|wb|二进制写入 一般用于非文本格式|
+|w+|读写,覆盖,创新|
+|a|以追加的模式打开(从EOF开始,必要是创建新文件)|
+|ab|二进制格式追加|
+|a+|追加方式读写|
+|r|只读方式打开|
+|rb|二进制只读方式|
+|r+|以读写方式,文件指针放开头,不覆盖,不创新|
+|w,r指针在文件头|a指针在文件结尾|
+
+**IO操作**
+
+     fp.read([size]) # size为读取的长度,以byte为单位
+     fp.readline([size]) #读一行 size默认为空
+     fp.readlines([size]) #把每一行当做list内容返回list
+
+     fp.write(str) #写str至文件,无换行符
+     fp.writelines(seq) #将seq的全部内容放入文件,无换行符添加
+     fp.close() # 关闭文件
+     fp.flush() #把缓冲区的内容写入硬盘
+     fp.tell() #返回文件指针位置
+     fp.next()#文件指针指向下一行
+
+     fp.seek(offset,from)方法改变当前文件的位置。Offset变量表示要移动的字节数。From变量指定开始移动字节的参考位置。
+     如果from被设为0，这意味着将文件的开头作为移动字节的参考位置。如果设为1，则使用当前的位置作为参考位置。如果它被设为2，那么该文件的末尾将作为参考位置。
+---
+#Python 网络爬虫#
+
+##python##
+ 
